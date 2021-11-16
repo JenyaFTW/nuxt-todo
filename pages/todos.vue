@@ -18,6 +18,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 import TodoList from '../components/TodoList.vue';
 
 export default {
@@ -28,25 +29,16 @@ export default {
 	data() {
 		return {
 			todos: [],
-			loading: false,
+			loading: true,
 			error: null,
 		};
 	},
-	created() {
-		this.fetchTodos();
-	},
-	methods: {
-		async fetchTodos() {
-			this.loading = true;
-
-			try {
-				const res = await this.$axios.get('https://jsonplaceholder.typicode.com/todos');
-				this.todos = res.data;
-			} catch (err) {
-				this.error = err;
-			}
-
-			this.loading = false;
+	async asyncData() {
+		try {
+			const res = await axios.get('https://jsonplaceholder.typicode.com/todos');
+			return { todos: res.data, loading: false };
+		} catch (err) {
+			return { error: err, loading: false };
 		}
 	}
 };
